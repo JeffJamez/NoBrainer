@@ -1,0 +1,203 @@
+<div
+  id="brainstorming-details"
+  data-id={@brainstorming.id}
+  data-name={@brainstorming.name}
+  data-last-accessed-at={@brainstorming.last_accessed_at}
+  data-admin-url-id={
+    if has_moderating_permission(@brainstorming.id, @current_user),
+      do: @brainstorming.admin_url_id,
+      else: nil
+  }
+  phx-hook="StoreRecentBrainstorming"
+>
+  <div class="content">
+    <div class="row">
+      <div class="col-sm-12 col-md-12 col-xl-6">
+        <h2 id="brainstorming-title">{@brainstorming.name}</h2>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-end flex-wrap">
+      <%= if has_moderating_permission(@brainstorming.id, @current_user) do %>
+        <.link
+          patch={~p"/brainstormings/#{@brainstorming.id}/new_lane"}
+          class="btn btn-primary m-1 d-inline-flex align-items-center"
+          title={gettext("New lane")}
+        >
+          <i class="bi bi-file-plus me-1"></i> {gettext("New lane")}
+        </.link>
+      <% end %>
+
+      <%= if idea_generation_enabled?() and has_moderating_permission(@brainstorming.id, @current_user) do %>
+        <button
+          type="button"
+          class="btn btn-primary m-1"
+          phx-click="generate_ai_ideas"
+          phx-value-id={@brainstorming.id}
+          title={gettext("AI")}
+        >
+          <i class="bi-magic"></i> {gettext("AI")}
+        </button>
+      <% end %>
+
+      <%= if ai_clustering_enabled?() and has_moderating_permission(@brainstorming.id, @current_user) do %>
+        <button
+          type="button"
+          class="btn btn-outline-primary m-1"
+          phx-click="cluster_ai_ideas"
+          phx-value-id={@brainstorming.id}
+          title={gettext("Cluster ideas")}
+        >
+          <i class="bi-diagram-3"></i> {gettext("Cluster")}
+        </button>
+      <% end %>
+
+      <.link
+        patch={~p"/brainstormings/#{@brainstorming.id}/share"}
+        class="btn btn-secondary m-1"
+        title={gettext("Share")}
+      >
+        <i class="bi-share-fill"></i>
+      </.link>
+
+      <%= if has_moderating_permission(@brainstorming.id, @current_user) do %>
+        <.link
+          href={~p"/admin/brainstormings/#{@brainstorming.admin_url_id}/edit"}
+          class="btn btn-secondary m-1"
+        >
+          <i class="bi-gear-fill"></i>
+        </.link>
+      <% end %>
+
+      <div
+        class="deletion-date-hint btn btn-outline-secondary m-1"
+        data-bs-toggle="tooltip"
+        data-bs-placement="auto"
+        data-bs-custom-class="deletion-date-hint-tooltip"
+        data-bs-title={brainstorming_available_until_full_text(@brainstorming)}
+      >
+        <i class="bi-calendar-x"></i> {brainstorming_available_until(@brainstorming)}
+      </div>
+    </div>
+
+    <.live_component
+      module={MindwendelWeb.LabelLive.CaptionsComponent}
+      id="captions"
+      brainstorming={@brainstorming}
+      filtered_labels={@filtered_labels}
+      current_user={@current_user}
+    />
+
+    <.live_component
+      module={MindwendelWeb.LaneLive.IndexComponent}
+      brainstorming={@brainstorming}
+      id={@brainstorming.id}
+      current_user={@current_user}
+      lanes={@lanes}
+    />
+
+    <.modal
+      :if={@live_action in [:new_idea]}
+      id="idea-modal"
+      show
+      on_cancel={JS.patch(~p"/brainstormings/#{@brainstorming.id}")}
+      title={gettext("New idea")}
+    >
+      <.live_component
+        module={MindwendelWeb.IdeaLive.FormComponent}
+        id={:new}
+        action={:new}
+        brainstorming_id={@brainstorming.id}
+        current_user={@current_user}
+        idea={@idea}
+      />
+    </.modal>
+
+    <.modal
+      :if={@live_action in [:show_idea]}
+      id="idea-modal"
+      show
+      on_cancel={JS.patch(~p"/brainstormings/#{@brainstorming.id}")}
+      title={gettext("Idea details")}
+    >
+      <.live_component
+        module={MindwendelWeb.IdeaLive.ShowComponent}
+        id={:show}
+        action={:show}
+        brainstorming_id={@brainstorming.id}
+        current_user={@current_user}
+        idea={@idea}
+      />
+    </.modal>
+
+    <.modal
+      :if={@live_action in [:new_lane]}
+      id="lane-modal"
+      show
+      on_cancel={JS.patch(~p"/brainstormings/#{@brainstorming.id}")}
+      title={gettext("New lane")}
+    >
+      <.live_component
+        module={MindwendelWeb.LaneLive.FormComponent}
+        id={:new}
+        action={:new}
+        brainstorming_id={@brainstorming.id}
+        current_user={@current_user}
+        lane={@lane}
+      />
+    </.modal>
+
+    <.modal
+      :if={@live_action in [:edit_idea]}
+      id="idea-modal"
+      show
+      on_cancel={JS.patch(~p"/brainstormings/#{@brainstorming.id}")}
+      title={gettext("Update idea")}
+    >
+      <.live_component
+        module={MindwendelWeb.IdeaLive.FormComponent}
+        id={:update}
+        action={:update}
+        brainstorming_id={@brainstorming.id}
+        current_user={@current_user}
+        idea={@idea}
+      />
+    </.modal>
+
+    <.modal
+      :if={@live_action in [:edit_lane]}
+      id="lane-modal"
+      show
+      on_cancel={JS.patch(~p"/brainstormings/#{@brainstorming.id}")}
+      title={gettext("Update lane")}
+    >
+      <.live_component
+        module={MindwendelWeb.LaneLive.FormComponent}
+        id={:update}
+        action={:update}
+        brainstorming_id={@brainstorming.id}
+        current_user={@current_user}
+        lane={@lane}
+      />
+    </.modal>
+    <.modal
+      :if={@live_action in [:share]}
+      id="share-modal"
+      show
+      on_cancel={JS.patch(~p"/brainstormings/#{@brainstorming.id}")}
+      title={gettext("Share brainstorming")}
+    >
+      <.live_component
+        module={MindwendelWeb.BrainstormingLive.ShareComponent}
+        id={:share}
+        action={:share}
+        brainstorming_id={@brainstorming.id}
+        current_user={@current_user}
+        uri={url(~p"/brainstormings/#{@brainstorming.id}")}
+        admin_uri={url(~p"/brainstormings/#{@brainstorming.id}/##{@brainstorming.admin_url_id}")}
+        active_uri={url(~p"/brainstormings/#{@brainstorming.id}")}
+        activated_uri_type={:uri}
+      />
+    </.modal>
+  </div>
+</div>

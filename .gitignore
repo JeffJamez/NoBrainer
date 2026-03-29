@@ -1,0 +1,40 @@
+# App
+/tmp
+/node_modules
+
+# Erlang/Elixir
+/_build
+/deps
+/*.ez
+/.elixir_ls
+/.fetch
+erl_crash.dump
+*.crash
+
+# Database
+*.sqlite
+*.sqlite3
+
+# Environment
+!.env.example
+
+# Logs
+logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+*.swp
+*.swo
+
+# Docker
+.docker/
+branch_structure.json
+temp_auto_push.bat
+temp_interactive_push.bat
+.gitignore
+config.bat

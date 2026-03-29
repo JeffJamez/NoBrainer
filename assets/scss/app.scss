@@ -1,0 +1,184 @@
+/* This file is for your main application css. It will be compiled to app.css, which is then loaded by esbuild. */
+@import "nprogress/nprogress";
+@import "_bootstrap_custom.scss";
+
+$bootstrap-icons-font-dir: "/fonts/bootstrap-icons";
+
+@import "bootstrap-icons/font/bootstrap-icons";
+@import "live/idea_live/_index_component.scss";
+
+@import "live/brainstorming_live/_show.scss";
+
+.footer {
+  height: 40px;
+}
+
+.nav-mindwendel-logo {
+  height: 25px;
+}
+
+.nav-mindwendel-back {
+  height: 14px;
+  width: 21px;
+  margin-right: 5px;
+}
+
+.nav-mindwendel-caption {
+  margin-right: var(--bs-navbar-brand-margin-end);
+}
+
+.nav-mindwendel-caption a {
+  text-decoration: none;
+  color: var(--bs-navbar-color);
+}
+
+.idea-add-button {
+  width: 50px;
+  height: 50px;
+  font-size: 22px;
+}
+
+// Taken from the examples shown:
+// https://icons.getbootstrap.com/icons/arrow-up-circle/
+button .bi,
+a .bi {
+  vertical-align: 0.1em;
+}
+
+.bg-mindwendel {
+  background-image: url("/images/mindwendel.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/* LiveView specific classes for your customizations */
+
+// similar to .phx-connected but also works when javascript is disabled
+div[data-phx-session] {
+  height: 100%;
+  width: 100%;
+}
+
+.phx-click-loading {
+  opacity: 0.5;
+  transition: opacity 1s ease-out;
+}
+
+.phx-disconnected {
+  cursor: wait;
+}
+
+.phx-disconnected * {
+  pointer-events: none;
+}
+
+.phx-modal-close {
+  color: #aaa;
+  float: right;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.phx-modal-close:hover,
+.phx-modal-close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Alerts and form errors */
+.alert:empty {
+  display: none;
+}
+
+.form-control-color {
+  max-width: 50px;
+}
+
+.heading-error {
+  font-size: 8rem;
+}
+
+.lane-header {
+  display: inline-block;
+  margin-left: 16px;
+}
+
+.lane {
+  border: 1px dashed $gray-400;
+  border-radius: 5px;
+  margin-right: 5px;
+  margin-left: 5px;
+  padding-top: 16px;
+  height: 100%;
+}
+
+.lanes-container-wrapper {
+  position: relative;
+
+  .lanes-container {
+    overflow-x: auto;
+    scrollbar-color: $gray-500 $gray-200;
+
+    &::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: $gray-200;
+      border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: $gray-500;
+      border-radius: 4px;
+
+      &:hover {
+        background-color: $gray-600;
+      }
+    }
+
+    > [class*="col-"] {
+      flex: 0 0 auto;
+      min-width: 300px;
+    }
+  }
+}
+
+.lanes-scroll-indicator {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 40px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+
+  &.visible {
+    opacity: 1;
+    pointer-events: auto;
+    cursor: pointer;
+  }
+
+  &--right {
+    right: 0;
+  }
+
+  &--left {
+    left: 0;
+  }
+
+  .scroll-arrow {
+    position: sticky;
+    top: 50vh;
+    display: block;
+    font-size: 1.5rem;
+    color: $gray-600;
+    text-align: center;
+  }
+}
+
+.text-pre-line {
+  white-space: pre-line;
+}

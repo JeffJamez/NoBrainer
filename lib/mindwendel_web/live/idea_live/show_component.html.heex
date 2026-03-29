@@ -1,0 +1,81 @@
+<div>
+  <%= with image when not is_nil(image) <- Enum.find(@idea.files, fn f -> Attachments.simplified_attached_file_type(f.file_type) == "image" end) do %>
+    <div class="show-idea-image-preview mb-3">
+      <img
+        src={~p"/files/#{image.id}"}
+        alt={image.name || gettext("Attached image")}
+        class="show-idea-image-preview__img"
+      />
+    </div>
+  <% end %>
+
+  <%= unless @idea.link do %>
+    <p class="text-pre-line">{@idea.body}</p>
+  <% end %>
+
+  <%= if @idea.link do %>
+    <.link href={@idea.link.url}>
+      {@idea.body}
+    </.link>
+    <hr />
+    <div class="row">
+      <div class="col-md-3">
+        <img src={@idea.link.img_preview_url} class="preview-url" />
+      </div>
+      <div class="col-md-9">
+        <p class="fw-bold">{@idea.link.title}</p>
+        <p>{@idea.link.description}</p>
+      </div>
+    </div>
+  <% end %>
+
+  <% preview_image =
+    Enum.find(@idea.files, fn f ->
+      Attachments.simplified_attached_file_type(f.file_type) == "image"
+    end) %>
+  <% non_preview_files =
+    if preview_image,
+      do: Enum.reject(@idea.files, &(&1.id == preview_image.id)),
+      else: @idea.files %>
+  <%= if length(non_preview_files) > 0 do %>
+    <%= for attachment <- non_preview_files do %>
+      <p class="text-muted">
+        <.file_icon type={Attachments.simplified_attached_file_type(attachment.file_type)} />
+        <.link href={~p"/files/#{attachment.id}"}>
+          {attachment.name || gettext("No filename")}
+        </.link>
+      </p>
+    <% end %>
+  <% end %>
+
+  <div class="mt-5 mb-2">
+    <p class="fw-bold">{gettext("Comments")}</p>
+    <%= for comment <- @idea.comments do %>
+      <.live_component
+        module={MindwendelWeb.CommentLive.ShowComponent}
+        id={comment.id}
+        comment={comment}
+        idea={@idea}
+        brainstorming_id={@brainstorming_id}
+        current_user={@current_user}
+        live_action={:show}
+      />
+    <% end %>
+    <%= if length(@idea.comments) == 0 do %>
+      {gettext("No comments available")}
+    <% end %>
+  </div>
+
+  <div class="mt-5 mb-2">
+    <p class="fw-bold">{gettext("Add a new comment")}</p>
+
+    <.live_component
+      module={MindwendelWeb.CommentLive.FormComponent}
+      id={:new}
+      brainstorming_id={@brainstorming_id}
+      current_user={@current_user}
+      idea={@idea}
+      action={:new}
+    />
+  </div>
+</div>

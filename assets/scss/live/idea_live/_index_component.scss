@@ -1,0 +1,85 @@
+// We would like to use the BEM css naming convention to avoid css collisions, see http://getbem.com/naming/
+
+.IndexComponent__IdeaLabelBadge {
+  @extend .badge;
+  @extend .rounded-pill;
+  display: inline-block !important; // override Bootstrap badge's inline-flex; required for text-truncate
+  max-width: 120px;
+}
+
+.IndexComponent__FilterButton {
+  max-width: 120px;
+}
+
+// The following placeholder selectors are taken from `../node_modules/bootstrap-icons/font/bootstrap-icons.css`.
+// We are not able to @extend the bootstrap-icon css classes directly from the imported bootstrap-icons.css, because
+// SASS is not able to extend the pseudo selectors used by bootstrap-icons, e.g. `bi-check-circle-fill::before { ... }`.
+// See https://stackoverflow.com/questions/17181837/sass-extend-with-pseudo-selectors
+//
+// Therefore, we need to copy these bootstrap-icon styles in the placeholder selectors in order to reuse them
+// in the dedicated css styles for the idea labels, e.g. `.IndexComponent__IdeaLabel`.
+%bi-icon-before {
+  display: inline-block;
+  font-family: bootstrap-icons !important;
+  font-style: normal;
+  font-weight: normal !important;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  vertical-align: text-bottom;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+%bi-check-circle-fill-before {
+  &::before {
+    // This content needs to match the content definition used in the `../node_modules/bootstrap-icons/font/bootstrap-icons.css`
+    content: "\f26a";
+  }
+}
+
+%bi-plus-circle-fill-before {
+  &::before {
+    content: "\f4f9";
+  }
+}
+
+%bi-circle-fill-before {
+  &::before {
+    content: "\f287";
+  }
+}
+
+%bi-x-circle-fill-before {
+  &::before {
+    content: "\f622";
+  }
+}
+
+.IndexComponent__IdeaLabel {
+  @extend %bi-icon-before;
+  @extend %bi-circle-fill-before;
+
+  &:hover {
+    @extend %bi-plus-circle-fill-before;
+  }
+}
+
+.IndexComponent__IdeaLabel--active {
+  @extend %bi-icon-before;
+  @extend %bi-check-circle-fill-before;
+
+  &:hover {
+    @extend %bi-x-circle-fill-before;
+  }
+}
+
+.preview-url {
+  width: 100px;
+  margin: auto;
+  display: block;
+}
+
+.icon-large {
+  font-size: 5rem;
+}
